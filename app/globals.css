@@ -3,6 +3,13 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --brand-background: #0E0E0E;
+  --brand-border: #1E1E1E;
+  --brand-white: #EEEEEE;
+  --brand-text: #696969;
+  --brand-accent: #2FA982;
+  --brand-dark: #252525;
+  --brand-dark-hover: #171717
 }
 
 @theme inline {
@@ -10,6 +17,13 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-brand-background: var(--brand-background);
+  --color-brand-border: var(--brand-border);
+  --color-brand-white: var(--brand-white);
+  --color-brand-text: var(--brand-text);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-dark-hover: #171717;
 }
 
 @media (prefers-color-scheme: dark) {

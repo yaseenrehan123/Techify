@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  clerkId   String    @id
+  email     String    @unique
+  username  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  posts     Post[]
+  comments  Comment[]
+  likes     Like[]
+}
+
+model Post {
+  id          String    @id
+  title       String
+  text        String
+  user        User      @relation(fields: [userClerkId], references: [clerkId], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userClerkId String
+  likes       Like[]    @relation(fields: [], references: [])
+  comments    Comment[]
+}
+
+model Like {
+  post        Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId      String
+  user        User   @relation(fields: [userClerkId], references: [clerkId], onDelete: Cascade)
+  userClerkId String
+
+  @@id([userClerkId, postId])
+}
+
+model Comment {
+  id          String   @id
+  text        String
+  user        User     @relation(fields: [userClerkId], references: [clerkId])
+  userClerkId String
+  post        Post     @relation(fields: [postId], references: [id])
+  postId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
