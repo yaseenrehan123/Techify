@@ -1,9 +1,11 @@
+import { PostInteractiveButtonProps } from '@/lib/types';
 import React from 'react'
 
-const PostInteractiveButton = ({ children }: { children: React.ReactNode }) => {
-    const handleClick = (e: React.MouseEvent) => {
+const PostInteractiveButton = ({ children, onClick }: PostInteractiveButtonProps) => {
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         e.preventDefault();
+        if (onClick) { onClick(e) };
     }
     return (
         <button type='button' onClick={(e) => handleClick(e)}

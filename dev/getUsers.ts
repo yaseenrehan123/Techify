@@ -1,13 +1,7 @@
 import prisma from "@/lib/prisma";
 async function main(): Promise<void> {
-    await prisma.like.deleteMany();
-    await prisma.comment.deleteMany();
-    await prisma.post.deleteMany();
-    await prisma.user.deleteMany();
-
     const users = await prisma.user.findMany();
 
-    console.log("DATABASE SEEDED!")
     console.log("USERS: ", users);
 }
 main()

@@ -15,7 +15,7 @@ const Menubar = () => {
                     <Input className='w-full rounded-[40px] border border-brand-border text-center outline-1'
                         placeholder='Search Something' />
                 </div>
-                <div className='flex justify-end px-4 text-brand-white gap-7 text-[1.4rem]'>
+                <div className='flex justify-end items-center px-4 text-brand-white gap-7 text-[1.4rem]'>
                     <div className='hover:cursor-pointer '>
                         <FaRegBell />
                     </div>

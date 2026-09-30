@@ -15,6 +15,7 @@ import { createUser } from '@/actions/userActions';
 import { useSignIn, useSignUp } from '@clerk/nextjs';
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import loginSchema from '@/schemas/loginSchema';
+import OAuthContainer from '../OAuthContainer';
 
 const LoginForm = () => {
     const [isError, setIsError] = useState<boolean>(false);
@@ -84,6 +85,7 @@ const LoginForm = () => {
                         {errors.password && <Message content={errors.password?.message} variant='error' />}
                     </Alignment>
                     <div id="clerk-captcha" />
+                    <OAuthContainer />
                     <Alignment variant='rowCenter' className='w-full'>
                         <Message
                             variant={isSubmitting ? "loading" : isSubmitSuccessful ? "success" : isError ? "error" : "default"}

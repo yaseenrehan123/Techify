@@ -8,7 +8,7 @@ const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY 
 
 export async function createUser(data: CreateUserFields): Promise<void> {
     const user = await prisma.user.findUnique({
-        where: { clerkId: data.clerkId }
+        where: { clerkId: data.clerkId, }
     });
     if (user) {
         throw new Error("USER ALREADY EXISTS!")

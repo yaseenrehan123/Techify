@@ -3,28 +3,28 @@ import { useProfileFloatingContext } from '@/contexts/ProfileFloatingContext';
 import { useClerk, useUser } from '@clerk/nextjs';
 import React from 'react'
 import { FaCircleUser } from 'react-icons/fa6';
-import { offset, useDismiss, useFloating, useInteractions } from "@floating-ui/react"
+import { offset, shift, useDismiss, useFloating, useInteractions } from "@floating-ui/react"
 import { Button } from '../ui/button';
 import { useAuthFloatingModalContext } from '@/contexts/AuthFloatingModalContext';
-import { useRouter } from 'next/navigation';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { AuthFloatingPanelMode } from '@/lib/types';
+import { useDeleteAccountConfirmationContext } from '@/contexts/DeleteAccountConfirmationContext';
 const ProfileAvatar = () => {
     const { user } = useUser()
     const { signOut } = useClerk()
     const loggedIn: boolean = !!user && !!user?.id;
-    const username: string = user?.username || user?.firstName || user?.fullName || user?.emailAddresses[0].emailAddress || ""
+    const username: string = user?.username || user?.firstName || user?.fullName || user?.emailAddresses[0]?.emailAddress || ""
     const displayChar: string = username.charAt(0).toUpperCase();
     const { enabled, setEnabled } = useProfileFloatingContext();
     const { setMode } = useAuthFloatingModalContext();
+    const { setEnabled: setDeleteConfirmation } = useDeleteAccountConfirmationContext();
+
     const { refs, context, x, y, strategy } = useFloating({
         open: enabled,
         onOpenChange(val) { setEnabled(val) },
         placement: "bottom-start",
         middleware: [
-            offset({
-                mainAxis: -125,
-                crossAxis: 35
+            offset(8),
+            shift({
+                padding: 12
             })
         ]
     });
@@ -36,26 +36,7 @@ const ProfileAvatar = () => {
     const onProfileClicked = () => {
         setEnabled(true)
     };
-    // const onSignUpClicked = (e: React.MouseEvent) => {
-    //     e.stopPropagation();
-    //     setAuthFormEnabled(true);
-    //     setMode("signup");
-    //     setEnabled(false)
 
-    // }
-    // const onLoginClicked = (e: React.MouseEvent) => {
-    //     e.stopPropagation();
-    //     setAuthFormEnabled(true);
-    //     setMode("login");
-    //     setEnabled(false)
-
-    // }
-    // const setAuthMode = (mode: AuthFloatingPanelMode) => {
-    //     const params = new URLSearchParams(searchParams.toString() ?? );
-    //     params.set("authmode", mode);
-    //     router.push(`${pathname}?${params.toString()}`);
-    //     setEnabled(false);
-    // }
     return (
         <div className='flex justify-end px-4 text-brand-white gap-7 text-[1.4rem] relative'
             ref={refs.setReference}
@@ -70,16 +51,21 @@ const ProfileAvatar = () => {
                 </div>}
             </div>
 
-            {enabled && <div className='absolute w-40 h-10 bg-brand-white  rounded-lg p-1'
+            {enabled && <div className='w-max max-w-xs min-w-40 bg-brand-white px-2 rounded-lg p-1'
                 ref={refs.setFloating}
                 {...getFloatingProps()}
-                style={{ position: strategy, top: x, left: y }}>
+                style={{ position: strategy, top: y ?? 0, left: x ?? 0 }}>
                 <div >
                     {loggedIn && <div className='flex items-center gap-2'>
                         <Button className={`bg-transparent border-brand-border text-brand-text font-bold hover:cursor-pointer
                     hover:bg-brand-dark-hover transition-all duration-150`}
-                            onClick={() => signOut()}>
+                            onClick={(e) => { e.stopPropagation(); signOut() }}>
                             SignOut
+                        </Button>
+                        <Button className={`bg-transparent border-brand-border text-brand-text font-bold hover:cursor-pointer
+                    hover:bg-brand-dark-hover transition-all duration-150`}
+                            onClick={(e) => { e.stopPropagation(); setDeleteConfirmation(true) }}>
+                            Delete Account
                         </Button>
                     </div>}
                     {!loggedIn && <div className='flex items-center gap-2'>

@@ -10,10 +10,9 @@ import signUpSchema from '@/schemas/signUpSchema';
 import Alignment from '@/components/ui/custom/alignment';
 import Message from '@/components/ui/custom/message';
 import { Button } from '@/components/ui/button';
-import { useMutation } from '@tanstack/react-query';
-import { createUser } from '@/actions/userActions';
 import { useSignUp } from '@clerk/nextjs';
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
+import OAuthContainer from '../OAuthContainer';
 
 const SignupForm = () => {
     const [isError, setIsError] = useState<boolean>(false);
@@ -37,14 +36,16 @@ const SignupForm = () => {
             console.log("SIGNUP NOT READY!")
             return
         }
+        setIsError(false);
+        setErrorMessage("");
         try {
-            const { error } = await signUp.password({
+            await signUp.password({
                 emailAddress: email,
                 password: password,
                 //username: username
             });
 
-            if (error) {
+            /*if (error) {
                 //console.error("Clerk Error:", JSON.stringify(error, null, 2));
                 if (isClerkAPIResponseError(error)) {
                     const clerkError = error.errors?.[0]?.longMessage || error.errors?.[0]?.message || "An error occurred";
@@ -57,7 +58,7 @@ const SignupForm = () => {
                     // Handle non-Clerk errors (network issues, etc.)
                     console.error("An unexpected error occurred", error);
                 }
-            }
+            }*/
             console.log("Clerk ID:", signUp.id)
             // await mutateAsync({
             //     clerkId: signUp.id!,
@@ -66,14 +67,28 @@ const SignupForm = () => {
             // });
 
             await signUp.verifications.sendEmailCode();
+
             setMode("verify");
             reset();
         }
         catch (err: any) {
-            console.error("DEBUG ERROR:", err)
-            const errorMessage = err.errors?.[0]?.message || "Something went wrong";
-            setErrorMessage(errorMessage);
+            // console.error("DEBUG ERROR:", err)
+            // const errorMessage = err.errors?.[0]?.message || "Something went wrong";
+            // setErrorMessage(errorMessage);
+            // setIsError(true);
+            //console.error("Clerk Error:", JSON.stringify(error, null, 2));
             setIsError(true);
+            if (isClerkAPIResponseError(err)) {
+                const clerkError = err.errors?.[0]?.longMessage || err.errors?.[0]?.message || "An error occurred";
+                setErrorMessage(clerkError)
+                console.error(clerkError);
+            }
+            else {
+                // Handle non-Clerk errors (network issues, etc.)
+                setErrorMessage((err as Error).message)
+                console.error("An unexpected error occurred", err);
+            }
+            throw err
         }
 
     }
@@ -105,11 +120,12 @@ const SignupForm = () => {
                         {errors.confirmPassword && <Message content={errors.confirmPassword?.message} variant='error' />}
                     </Alignment>
                     <div id="clerk-captcha" />
+                    <OAuthContainer />
                     <Alignment variant='rowCenter' className='w-full'>
                         <Message
                             variant={isSubmitting ? "loading" : isSubmitSuccessful ? "success" : isError ? "error" : "default"}
-                            content={isSubmitting ? "Loading..." : isSubmitSuccessful ? "Success!" : isError ? errorMessage : ""}
-                            disableOnContent='md' />
+                            content={isError ? errorMessage : isSubmitting ? "Loading..." : isSubmitSuccessful ? "Success!" : ""}
+                            disableOnContent={isError ? "never" : "md"} />
                     </Alignment>
                     <div className='w-full flex justify-end items-center gap-2'>
                         <Button variant={"default"} size={"lg"}
