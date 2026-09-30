@@ -8,7 +8,7 @@ import Message from '../ui/custom/message';
 import { useInView } from "react-intersection-observer"
 import PostDisplayer from './PostDisplayer';
 import { useSearchParams } from 'next/navigation';
-import { FeedType } from '@/lib/types';
+import { FeedType, FetchPostsReturn } from '@/lib/types';
 const PostInfiniteScroll = () => {
     const { user, isLoaded } = useUser();
     const postsLimit: number = 9
@@ -18,26 +18,25 @@ const PostInfiniteScroll = () => {
     });
     const searchParams = useSearchParams();
     const feedCategory: FeedType = searchParams.get("feed") as FeedType
-    const { data, fetchNextPage, fetchPreviousPage, hasNextPage,
-        hasPreviousPage, isFetchingNextPage, isFetchingPreviousPage, status, error } = useInfiniteQuery({
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, error } =
+        useInfiniteQuery({
             queryKey: ["posts-fetching", feedCategory],
             initialPageParam: 1,
-            queryFn: async ({ pageParam }) => fetchPosts({
-                page: pageParam,
-                limit: postsLimit,
-                currentUserId: user?.id || "",
-                filters: {
-                    feed: feedCategory
-                }
-            }),
-            getNextPageParam: (lastPage, allPages) => lastPage.nextPage ?? null,
-            getPreviousPageParam: (lastPage, allPages) => { },
+            queryFn: async ({ pageParam }: { pageParam: number }) =>
+                fetchPosts({
+                    page: pageParam,
+                    limit: postsLimit,
+                    currentUserId: user?.id || "",
+                    filters: {
+                        feed: feedCategory,
+                    },
+                }),
+            getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
             staleTime: 1000 * 60 * 5,
             gcTime: 1000 * 60 * 10,
             refetchOnWindowFocus: false,
-            enabled: isLoaded
+            enabled: isLoaded,
         });
-
 
     useEffect(() => {
         if (inView && hasNextPage && !isFetchingNextPage) {
