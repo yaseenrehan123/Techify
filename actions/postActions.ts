@@ -74,6 +74,7 @@ export async function fetchPosts({ page, limit, filters, currentUserId }: FetchP
             throw new Error((err as Error).message);
         }
     }
+
     let orderByClause: any = { createdAt: 'desc' };
     let whereClause: any = {}
     if (feedType == "popular") {
@@ -339,6 +340,18 @@ export async function addToViewedPosts({ clerkId, postId }: PostUserActionFields
     }
 
     try {
+        // Ensure the User record exists before referencing userClerkId
+        // Replace 'user' with proper values if available, or fetch from Clerk SDK on the server
+        await prisma.user.upsert({
+            where: { clerkId },
+            update: {},
+            create: {
+                clerkId,
+                email: `${clerkId}@placeholder.com`, // Adjust to your user's email flow
+                username: `user_${clerkId.slice(-6)}`,
+            },
+        });
+
         const saved = await prisma.viewedPost.upsert({
             where: {
                 userClerkId_postId: { userClerkId: clerkId, postId }

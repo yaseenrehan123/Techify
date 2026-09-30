@@ -1,0 +1,472 @@
+{
+    "users": [
+        {
+            "clerkId": "user_2a1B3c4D5e6F7g8H9i0J1k2L",
+            "email": "alex.chen@techdev.io",
+            "username": "alexchen"
+        },
+        {
+            "clerkId": "user_3b2C4d5E6f7G8h9I0j1K2l3M",
+            "email": "sarah.jenkins@codecraft.com",
+            "username": "sarah_j"
+        },
+        {
+            "clerkId": "user_4c3D5e6F7g8H9i0J1k2L3m4N",
+            "email": "dev_marcus@stackoverflow.dev",
+            "username": "marcus_dev"
+        },
+        {
+            "clerkId": "user_5d4E6f7G8h9I0j1K2l3M4n5O",
+            "email": "elena.rodriguez@frontend.design",
+            "username": "elena_ui"
+        },
+        {
+            "clerkId": "user_6e5F7g8H9i0J1k2L3m4N5o6P",
+            "email": "backend_dave@cloudnative.net",
+            "username": "dave_ops"
+        }
+    ],
+    "posts": [
+        {
+            "id": "post-1",
+            "title": "How are you handling state management in large React projects in 2026?",
+            "text": "We are currently refactoring a massive enterprise web application and the legacy Redux boilerplate is killing our developer velocity. We are looking into Zustand, Jotai, or even standard React Context with custom hooks. For those managing complex, real-time dashboards with frequent updates, what has been your go-to state management solution lately and why?",
+            "authorIndex": 0,
+            "comments": [
+                {
+                    "authorIndex": 1,
+                    "text": "We migrated our core dashboard from Redux Toolkit to Zustand last year and haven't looked back. The reduction in boilerplate alone saved us weeks of setup time."
+                },
+                {
+                    "authorIndex": 2,
+                    "text": "Don't sleep on Jotai if you need atomic state. It works exceptionally well when you have isolated components updating independently without triggering wide re-renders."
+                },
+                {
+                    "authorIndex": 3,
+                    "text": "Standard Context + useReducer works fine if you wrap your state carefully, but once you scale past 20+ global states, performance degrades quickly without memoization."
+                },
+                {
+                    "authorIndex": 4,
+                    "text": "Redux Toolkit with RTK Query is still hard to beat if you rely heavily on automatic caching and polling. It’s verbose, but rock solid."
+                }
+            ],
+            "likedByIndices": [
+                1,
+                2,
+                3
+            ]
+        },
+        {
+            "id": "post-2",
+            "title": "Show HN: DevEngine - Lightweight 2D engine built specifically for web games",
+            "text": "Hey everyone! Over the past 8 months, I've been building DevEngine, an open-source, WebGPU-first 2D game engine optimized for fast load times and minimal memory footprint. It supports custom sprite batching, built-in tilemap rendering, and a lightweight physics pipeline. You can check out the live demo and documentation at devengine-demo.dev. Would love to get your feedback on the API design!",
+            "authorIndex": 1,
+            "comments": [
+                {
+                    "authorIndex": 0,
+                    "text": "Just played around with the live demo on mobile. The rendering pipeline is super smooth! How are you handling fallback for browsers without WebGPU support?"
+                },
+                {
+                    "authorIndex": 2,
+                    "text": "Starred the repo! The component-entity system looks very clean compared to Phaser."
+                },
+                {
+                    "authorIndex": 3,
+                    "text": "Great job on the documentation. Are there any plans to add spine animation support in future releases?"
+                },
+                {
+                    "authorIndex": 4,
+                    "text": "Built a quick prototype using your tilemap module. The DX is fantastic, though the physics collisions feel a bit floaty on high refresh rate monitors."
+                }
+            ],
+            "likedByIndices": [
+                0,
+                2,
+                3,
+                4
+            ]
+        },
+        {
+            "id": "post-3",
+            "title": "Why is C++ still preferred over Rust for AAA game engines?",
+            "text": "Rust has made huge strides in safety, modern tooling, and memory management, yet almost every major game engine—Unreal, Frostbite, REDengine—remains strictly C++ or C# based. Is this purely due to legacy codebases and existing developer expertise, or are there fundamental architectural hurdles (like object lifetime management in ECS or memory allocators) that make Rust impractical for AAA production pipelines?",
+            "authorIndex": 2,
+            "comments": [
+                {
+                    "authorIndex": 4,
+                    "text": "It’s 90% legacy inertia and middleware integration. AAA studios have millions of lines of proven C++ code and proprietary tools that would cost tens of millions to rewrite."
+                },
+                {
+                    "authorIndex": 0,
+                    "text": "Rust’s borrow checker can be notoriously difficult to work with when implementing cyclic references or graph structures, which are everywhere in game engine architectures."
+                },
+                {
+                    "authorIndex": 1,
+                    "text": "Console SDKs and graphics drivers are built with C/C++ interfaces in mind. Integrating Rust into proprietary console toolchains often requires custom bindings that studios don't want to maintain."
+                },
+                {
+                    "authorIndex": 3,
+                    "text": "Bevy is proving that a pure Rust engine is viable, but it will take years before AAA studios feel comfortable risking a $100M project on newer tech stacks."
+                }
+            ],
+            "likedByIndices": [
+                0,
+                1,
+                4
+            ]
+        },
+        {
+            "id": "post-4",
+            "title": "Launching Beta: CraftQuery - Visual SQL Query Builder for Developers",
+            "text": "Writing complex SQL queries with multiple JOINs and window functions can be tedious during rapid prototyping. We built CraftQuery to help developers visually design schema queries, inspect execution plans, and instantly generate optimized SQL code (PostgreSQL, MySQL, and SQLite). We're officially opening our public beta today! Try it out and let us know what features you want to see next.",
+            "authorIndex": 3,
+            "comments": [
+                {
+                    "authorIndex": 4,
+                    "text": "Signed up for the beta! The execution plan visualizer is actually super helpful for debugging slow subqueries."
+                },
+                {
+                    "authorIndex": 0,
+                    "text": "Does this support custom database schemas with enum types and JSONB columns in PostgreSQL?"
+                },
+                {
+                    "authorIndex": 1,
+                    "text": "Looks neat! How does it handle sensitive schema data? Is parsing done locally in the browser or on your servers?"
+                },
+                {
+                    "authorIndex": 2,
+                    "text": "Love the UI. If you add self-hosting via Docker, my backend team would adopt this immediately."
+                }
+            ],
+            "likedByIndices": [
+                0,
+                2,
+                4
+            ]
+        },
+        {
+            "id": "post-5",
+            "title": "Is WebAssembly (Wasm) living up to its promise for full-stack web dev?",
+            "text": "When WebAssembly first gained traction, the promise was near-native speed in the browser and the ability to run any language anywhere. Aside from heavy canvas tools (like Figma) and game ports, how many of you are actually using Wasm in production for everyday web apps? Are the bundle sizes and interop overhead worth it over pure JS/TS?",
+            "authorIndex": 4,
+            "comments": [
+                {
+                    "authorIndex": 0,
+                    "text": "We use Wasm via Rust to process heavy image editing tasks client-side. It cut server rendering costs by almost 60%."
+                },
+                {
+                    "authorIndex": 1,
+                    "text": "For standard CRUD apps, it's complete overkill. The transfer cost of loading the Wasm binary often offsets any runtime performance gains."
+                },
+                {
+                    "authorIndex": 2,
+                    "text": "It shines in edge computing. Running Wasm modules on Cloudflare Workers or Fastly gives crazy low startup times compared to traditional Docker containers."
+                },
+                {
+                    "authorIndex": 3,
+                    "text": "The DOM manipulation bridge is still a bit of a bottleneck. Once Wasm gets direct DOM access without JS bindings, adoption will explode."
+                }
+            ],
+            "likedByIndices": [
+                0,
+                1,
+                2
+            ]
+        },
+        {
+            "id": "post-6",
+            "title": "What’s your team's strategy for micro-frontends in 2026?",
+            "text": "Our company is growing and multiple independent feature teams are starting to step on each other's toes in our monolithic React repo. We are evaluating micro-frontends using Module Federation vs single-spa. To anyone currently running a micro-frontend architecture in production: was it worth the added complexity in deployment pipelines, or did it introduce more problems than it solved?",
+            "authorIndex": 0,
+            "comments": [
+                {
+                    "authorIndex": 4,
+                    "text": "Unless you have 50+ engineers across distinct product domains, don't do it. The operational overhead and shared dependency version drift are a nightmare."
+                },
+                {
+                    "authorIndex": 3,
+                    "text": "Module Federation works well for us, but you must enforce strict linting and continuous integration checks for shared dependencies like React core."
+                },
+                {
+                    "authorIndex": 1,
+                    "text": "We tried single-spa two years ago and eventually rolled back to a monorepo with Turborepo. Build times stayed fast without the runtime micro-frontend headache."
+                },
+                {
+                    "authorIndex": 2,
+                    "text": "It solved our organizational scaling problem, but hurt our end-user performance due to duplicate library downloads. Trade-offs everywhere."
+                }
+            ],
+            "likedByIndices": [
+                1,
+                3
+            ]
+        },
+        {
+            "id": "post-7",
+            "title": "Indie Dev Blog: How we optimized our Godot 4 game to run at 60 FPS on low-end hardware",
+            "text": "Hey fellow devs! During the development of our upcoming sci-fi tactics game, we ran into severe frame drops on integrated GPUs. In our latest devlog post, we walk through how we refactored our lightmap bakes, switched from complex spatial shaders to custom low-poly shaders, and optimized scene tree updates. Check out the write-up and let us know if you have any questions about Godot 4 optimization techniques!",
+            "authorIndex": 1,
+            "comments": [
+                {
+                    "authorIndex": 2,
+                    "text": "Excellent write-up! Moving away from real-time dynamic shadows saved our project when porting to mobile as well."
+                },
+                {
+                    "authorIndex": 3,
+                    "text": "Godot 4's Forward+ renderer is power hungry. Did you end up switching to the Compatibility (OpenGL3) renderer for low-end targets?"
+                },
+                {
+                    "authorIndex": 0,
+                    "text": "The section on batching particle draw calls was super insightful. Wish Godot's official docs had more practical examples like this."
+                },
+                {
+                    "authorIndex": 4,
+                    "text": "Wishlisted the game on Steam! Always happy to support devs who take optimization seriously."
+                }
+            ],
+            "likedByIndices": [
+                0,
+                2,
+                3,
+                4
+            ]
+        },
+        {
+            "id": "post-8",
+            "title": "CSS Subgrid is fully supported everywhere now, so why aren't more people using it?",
+            "text": "Now that CSS Subgrid has cross-browser baseline support across modern browsers, I expected layout frameworks and design systems to adopt it rapidly. Yet, most codebases I inspect are still relying on deep flexbox nesting or rigid grid parent setups. Are developers just unaware of subgrid, or is there a trickier learning curve than expected?",
+            "authorIndex": 3,
+            "comments": [
+                {
+                    "authorIndex": 0,
+                    "text": "Muscle memory is a powerful thing. Most devs learned Flexbox and standard CSS Grid years ago and default to what they already know."
+                },
+                {
+                    "authorIndex": 1,
+                    "text": "Subgrid is a game changer for card layouts with aligned footers and headers across columns! I use it daily now."
+                },
+                {
+                    "authorIndex": 2,
+                    "text": "Design system libraries take time to refactor core layout components. Give it another year or two and it'll be standard practice."
+                },
+                {
+                    "authorIndex": 4,
+                    "text": "The main challenge is component encapsulation. In React/Vue, subgrid requires children to be tight grid items of the parent, which breaks some isolation patterns."
+                }
+            ],
+            "likedByIndices": [
+                0,
+                1,
+                2
+            ]
+        },
+        {
+            "id": "post-9",
+            "title": "Announcement: Presenting PixelBlast - A modern 16-bit retro arcade game built with WebGL",
+            "text": "After two years of solo development after work, my retro arcade shooter PixelBlast is officially live on Web and Steam! It features high-octane synthwave audio, customizable ship loadouts, and global leaderboards. Built from scratch with JavaScript and WebGL to ensure buttery 120Hz performance. Play the browser demo for free and let me know what high score you hit!",
+            "authorIndex": 2,
+            "comments": [
+                {
+                    "authorIndex": 1,
+                    "text": "Played the web demo for 20 minutes straight. Controls feel super crisp and responsive!"
+                },
+                {
+                    "authorIndex": 3,
+                    "text": "The audio design is incredible! Did you compose the synthwave tracks yourself or license them?"
+                },
+                {
+                    "authorIndex": 0,
+                    "text": "Found a minor bug: if you pause during the stage boss entrance, the particle effects freeze on screen permanently."
+                },
+                {
+                    "authorIndex": 4,
+                    "text": "Just bought it on Steam. Best $10 I’ve spent on an indie game this month!"
+                }
+            ],
+            "likedByIndices": [
+                0,
+                1,
+                3,
+                4
+            ]
+        },
+        {
+            "id": "post-10",
+            "title": "Docker vs Podman for local development environments?",
+            "text": "Our infrastructure team is considering moving our local developer workstations from Docker Desktop to Podman due to licensing costs and rootless container security requirements. For backend engineers who made this transition recently, how seamless was the switch? Did you encounter major compatibility issues with docker-compose files or local volume mounts on macOS/Linux?",
+            "authorIndex": 4,
+            "comments": [
+                {
+                    "authorIndex": 0,
+                    "text": "Podman Desktop has come a long way. podman-compose handles 95% of standard compose files without modification."
+                },
+                {
+                    "authorIndex": 1,
+                    "text": "On Linux it’s practically native and seamless. On macOS, running the virtual machine layer can still be slightly slower for heavy file-system mounts compared to OrbStack."
+                },
+                {
+                    "authorIndex": 2,
+                    "text": "Rootless containers are great for security, but watch out for volume permission issues when mounting host directories into the container."
+                },
+                {
+                    "authorIndex": 3,
+                    "text": "We switched 200+ engineers to Podman last year. Took a week of troubleshooting script aliases, but we saved a bundle on enterprise licensing."
+                }
+            ],
+            "likedByIndices": [
+                0,
+                2,
+                3
+            ]
+        },
+        {
+            "id": "post-11",
+            "title": "How do you structure your monorepo for maximum build caching?",
+            "text": "We are managing a monorepo containing 3 frontend apps, 4 microservices, and 5 shared TypeScript packages. As the codebase grows, our CI pipeline times are creeping up toward 25 minutes. We are currently using Nx, but feel our workspace boundary definitions might be inefficient. What caching strategies (Turborepo, Nx Cloud, Bazel) have yielded the best speedups for your build pipelines?",
+            "authorIndex": 0,
+            "comments": [
+                {
+                    "authorIndex": 4,
+                    "text": "Turning on remote caching in Nx Cloud cut our CI pipeline execution times from 20 minutes down to under 3 minutes overnight."
+                },
+                {
+                    "authorIndex": 2,
+                    "text": "Make sure your shared internal packages aren't importing everything from a single index file. Barrel exports invalidate build caches unnecessarily."
+                },
+                {
+                    "authorIndex": 3,
+                    "text": "We use Turborepo with GitHub Actions cache backend. Simple to set up and very reliable for JS/TS monorepos."
+                },
+                {
+                    "authorIndex": 1,
+                    "text": "If you have non-JS tools in the repo (like Go or Rust services), Bazel is king, but the setup learning curve is steep."
+                }
+            ],
+            "likedByIndices": [
+                1,
+                2,
+                4
+            ]
+        },
+        {
+            "id": "post-12",
+            "title": "Showcasing APIDeck: Instant mock APIs generated straight from OpenAPI specs",
+            "text": "Developers spend too much time building mock backend endpoints during early frontend prototyping. We created APIDeck—a CLI tool that takes any OpenAPI 3.0 file and spins up a local server with realistic dummy data, response delays, and dynamic route simulation in seconds. It’s open-source and ready for testing! Let us know what you think.",
+            "authorIndex": 3,
+            "comments": [
+                {
+                    "authorIndex": 0,
+                    "text": "This is super useful for frontend devs waiting on backend API specifications to be finalized!"
+                },
+                {
+                    "authorIndex": 1,
+                    "text": "Does it support custom seed data generators (like generating realistic phone numbers or addresses using Faker.js logic)?"
+                },
+                {
+                    "authorIndex": 2,
+                    "text": "Tested the CLI tool just now. Spun up in under 2 seconds! Adding this to our frontend test stack."
+                },
+                {
+                    "authorIndex": 4,
+                    "text": "Does it support WebSocket or gRPC mocks, or is it strictly REST APIs for now?"
+                }
+            ],
+            "likedByIndices": [
+                0,
+                1,
+                2,
+                4
+            ]
+        },
+        {
+            "id": "post-13",
+            "title": "Are monolithic architectures making a serious comeback?",
+            "text": "After years of microservice hype, it seems like more engineering blogs and senior architects are preaching the virtues of the \"modular monolith.\" Companies are realizing the network latency, deployment complexity, and distributed tracing costs of microservices are often unnecessary. Have any of your teams successfully migrated back from microservices to a clean monolith?",
+            "authorIndex": 4,
+            "comments": [
+                {
+                    "authorIndex": 0,
+                    "text": "We merged 12 microservices back into a single Ruby on Rails monolith last quarter. Deployment bugs dropped by 70% and dev onboarding is so much faster."
+                },
+                {
+                    "authorIndex": 1,
+                    "text": "Microservices solve organizational problems, not technical ones. If you don't have hundreds of engineers working independently, a monolith is almost always better."
+                },
+                {
+                    "authorIndex": 2,
+                    "text": "Modular monoliths give you the best of both worlds: clean domain boundaries in code with the simple deployment model of a single artifact."
+                },
+                {
+                    "authorIndex": 3,
+                    "text": "Don't throw the baby out with the bathwater. Microservices still make sense when individual services have drastically different scaling needs or data compliance requirements."
+                }
+            ],
+            "likedByIndices": [
+                0,
+                1,
+                2,
+                3
+            ]
+        },
+        {
+            "id": "post-14",
+            "title": "Unreal Engine 5.4 rendering performance on low-spec hardware - Tips & Tricks",
+            "text": "While Nanite and Lumen are revolutionary features for high-end cinematic graphics, targeting lower-spec consoles or mid-range gaming laptops can be a struggle in UE5. Here is a breakdown of our team's recommended settings for scaling down scalability presets, adjusting shadow maps, and configuring TSR (Temporal Super Resolution) for smooth 60 FPS gameplay without sacrificing visual clarity.",
+            "authorIndex": 1,
+            "comments": [
+                {
+                    "authorIndex": 2,
+                    "text": "Turning off Lumen hardware ray tracing and falling back to screen-space reflections boosted our base framerate on integrated GPUs by nearly 40%."
+                },
+                {
+                    "authorIndex": 3,
+                    "text": "TSR performance mode is surprisingly crisp compared to old FXAA, especially at lower base rendering resolutions."
+                },
+                {
+                    "authorIndex": 4,
+                    "text": "Nanite fallback meshes are often overlooked! Make sure your auto-generated proxy meshes are properly optimized for low-end graphics cards."
+                },
+                {
+                    "authorIndex": 0,
+                    "text": "Fantastic guide! Saved our indie studio from pulling our hair out during console certification optimization."
+                }
+            ],
+            "likedByIndices": [
+                0,
+                2,
+                3,
+                4
+            ]
+        },
+        {
+            "id": "post-15",
+            "title": "Tailwind CSS v4 is out: What are your thoughts on the new CSS-first configuration?",
+            "text": "Tailwind CSS v4 completely eliminates the traditional tailwind.config.js file in favor of configuring everything natively within CSS files using standard @theme directives. The new Rust-powered Oxide engine makes builds practically instantaneous. Have you upgraded your projects yet, and do you prefer this CSS-first approach over JavaScript-based configuration files?",
+            "authorIndex": 0,
+            "comments": [
+                {
+                    "authorIndex": 3,
+                    "text": "The compilation speed with the Rust engine is mind-blowing. Hot module reloading feels instant even in massive projects."
+                },
+                {
+                    "authorIndex": 1,
+                    "text": "I miss having full JS access in tailwind.config.js for dynamic color palette calculations, but defining themes in pure CSS feels much cleaner overall."
+                },
+                {
+                    "authorIndex": 2,
+                    "text": "Upgrade process took about 15 minutes for our Vite project. The auto-migrator tool handled almost all class name changes smoothly."
+                },
+                {
+                    "authorIndex": 4,
+                    "text": "Having everything in native CSS syntax makes it so much easier for designers who know standard CSS but don't want to mess with JS config files."
+                }
+            ],
+            "likedByIndices": [
+                1,
+                2,
+                3,
+                4
+            ]
+        }
+    ]
+}

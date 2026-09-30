@@ -4,7 +4,7 @@ import PostContainer from '../PostContainer';
 import { Separator } from '@base-ui/react';
 import AddCommentForm from '../comments/AddCommentForm';
 import { useParams } from 'next/navigation';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { addToViewedPosts, getPostById } from '@/actions/postActions';
 import { useUser } from '@clerk/nextjs';
 import Message from '@/components/ui/custom/message';
@@ -16,6 +16,7 @@ const PostDetailsSection = () => {
     const params = useParams();
     const id = params.id as string;
     const { user, isLoaded } = useUser();
+    const queryClient = useQueryClient();
     const { data, isPending, isError, error } = useQuery({
         queryKey: ["getPostForDetails", id],
         queryFn: () => getPostById({
@@ -30,6 +31,9 @@ const PostDetailsSection = () => {
     const { mutate } = useMutation({
         mutationKey: ["viewedPost", id],
         mutationFn: addToViewedPosts,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["posts-fetching"] });
+        }
     });
 
     //console.log("Post Details Data: ", data);
