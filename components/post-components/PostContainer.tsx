@@ -23,10 +23,15 @@ const PostContainer = ({
         mutationKey: ["likePost", id],
         mutationFn: likePost,
         onMutate: async () => {
+            // 1. Cancel outgoing refetches so they don't overwrite optimistic update
             await queryClient.cancelQueries({ queryKey: ["posts-fetching"] });
+
+            // 2. Snapshot current data for exact/matching queries using getQueriesData
             const previousData = queryClient.getQueriesData({ queryKey: ["posts-fetching"] });
+
+            // 3. Optimistically update all matching queries in cache
             queryClient.setQueriesData({ queryKey: ["posts-fetching"] }, (oldData: any) => {
-                if (!oldData) return oldData;
+                if (!oldData || !oldData.pages) return oldData;
                 return {
                     ...oldData,
                     pages: oldData.pages.map((page: any) => ({
@@ -45,12 +50,20 @@ const PostContainer = ({
                     })),
                 };
             });
-            return { previousData }
+
+            return { previousData };
         },
         onError: (err, variables, context) => {
+            // 4. Restore each cached query key to its snapshot entry
             if (context?.previousData) {
-                queryClient.setQueriesData({ queryKey: ["posts-fetching"] }, context.previousData);
+                context.previousData.forEach(([queryKey, data]) => {
+                    queryClient.setQueryData(queryKey, data);
+                });
             }
+        },
+        onSettled: () => {
+            // 5. Always refetch after error or success to keep server/client synced
+            queryClient.invalidateQueries({ queryKey: ["posts-fetching"] });
         }
     });
     const { mutate: bookmarkActionMutate } = useMutation({
