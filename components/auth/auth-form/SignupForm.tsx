@@ -93,7 +93,7 @@ const SignupForm = () => {
 
     }
     return (
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-4 '>
             <CardHeader className='text-3xl font-bold'>
                 SignUp
             </CardHeader>

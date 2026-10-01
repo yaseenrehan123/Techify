@@ -94,14 +94,6 @@ export async function fetchPosts({ page, limit, filters, currentUserId }: FetchP
             some: { userClerkId: currentUserId }
         }
     }
-    // else if (filters?.feed == "viewed") {
-    //     if (!currentUserId) {
-    //         return { posts: [], nextPage: null }
-    //     }
-    //     whereClause.viewedPosts = {
-    //         some: { userClerkId: currentUserId }
-    //     }
-    // }
     try {
         const posts = await prisma.post.findMany({
             skip: (page - 1) * limit,

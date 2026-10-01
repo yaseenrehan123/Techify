@@ -18,9 +18,10 @@ const PostInfiniteScroll = () => {
     });
     const searchParams = useSearchParams();
     const feedCategory: FeedType = searchParams.get("feed") as FeedType
+    const filterUserId: string = searchParams.get("authorId") as string
     const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, error } =
         useInfiniteQuery({
-            queryKey: ["posts-fetching", feedCategory],
+            queryKey: ["posts-fetching", feedCategory, filterUserId, user?.id],
             initialPageParam: 1,
             queryFn: async ({ pageParam }: { pageParam: number }) =>
                 fetchPosts({
@@ -28,6 +29,7 @@ const PostInfiniteScroll = () => {
                     limit: postsLimit,
                     currentUserId: user?.id || "",
                     filters: {
+                        clerkId: filterUserId,
                         feed: feedCategory,
                     },
                 }),

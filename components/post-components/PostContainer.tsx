@@ -23,9 +23,14 @@ const PostContainer = ({
         mutationKey: ["likePost", id],
         mutationFn: likePost,
         onMutate: async () => {
+            // Cancel outgoing refetches for both feed queries and single post query
             await queryClient.cancelQueries({ queryKey: ["posts-fetching"] });
+            await queryClient.cancelQueries({ queryKey: ["getPostForDetails", id] });
 
-            const previousData = queryClient.getQueriesData({ queryKey: ["posts-fetching"] });
+
+            const previousFeedData = queryClient.getQueriesData({ queryKey: ["posts-fetching"] });
+            const previousDetailData = queryClient.getQueryData(["getPostForDetails", id]);
+
 
             queryClient.setQueriesData({ queryKey: ["posts-fetching"] }, (oldData: any) => {
                 if (!oldData || !oldData.pages) return oldData;
@@ -39,7 +44,7 @@ const PostContainer = ({
                                 return {
                                     ...post,
                                     isLiked: nextLiked,
-                                    likesCount: nextLiked ? post.likesCount + 1 : post.likesCount - 1,
+                                    likesCount: nextLiked ? (post.likesCount || 0) + 1 : Math.max(0, (post.likesCount || 0) - 1),
                                 };
                             }
                             return post;
@@ -48,37 +53,60 @@ const PostContainer = ({
                 };
             });
 
-            return { previousData };
+
+            queryClient.setQueryData(["getPostForDetails", id], (oldData: any) => {
+                if (!oldData) return oldData;
+                const nextLiked = !oldData.isLiked;
+                return {
+                    ...oldData,
+                    isLiked: nextLiked,
+                    likesCount: nextLiked ? (oldData.likesCount || 0) + 1 : Math.max(0, (oldData.likesCount || 0) - 1),
+                };
+            });
+
+            return { previousFeedData, previousDetailData };
         },
         onError: (err, variables, context) => {
-            if (context?.previousData) {
-                context.previousData.forEach(([queryKey, data]) => {
+
+            if (context?.previousFeedData) {
+                context.previousFeedData.forEach(([queryKey, data]) => {
                     queryClient.setQueryData(queryKey, data);
                 });
             }
+
+            if (context?.previousDetailData) {
+                queryClient.setQueryData(["getPostForDetails", id], context.previousDetailData);
+            }
         },
         onSettled: () => {
+            // Invalidate both feed queries and single post query to synchronize server state
             queryClient.invalidateQueries({ queryKey: ["posts-fetching"] });
+            queryClient.invalidateQueries({ queryKey: ["getPostForDetails", id] });
         }
     });
+
     const { mutate: bookmarkActionMutate } = useMutation({
         mutationKey: ["bookmark", id],
         mutationFn: toggleBookmark,
         onMutate: async () => {
             await queryClient.cancelQueries({ queryKey: ["posts-fetching"] });
-            const previousData = queryClient.getQueriesData({ queryKey: ["posts-fetching"] });
+            await queryClient.cancelQueries({ queryKey: ["getPostForDetails", id] });
+
+            const previousFeedData = queryClient.getQueriesData({ queryKey: ["posts-fetching"] });
+            const previousDetailData = queryClient.getQueryData(["getPostForDetails", id]);
+
+            // 1. Optimistically update feed queries
             queryClient.setQueriesData({ queryKey: ["posts-fetching"] }, (oldData: any) => {
-                if (!oldData) return oldData;
+                if (!oldData || !oldData.pages) return oldData;
                 return {
                     ...oldData,
                     pages: oldData.pages.map((page: any) => ({
                         ...page,
                         posts: page.posts.map((post: any) => {
                             if (post.id === id) {
-                                const nextBookmark = !post.isBookMarked;
                                 return {
                                     ...post,
-                                    isBookMarked: nextBookmark,
+                                    isBookMarked: !post.isBookMarked,
                                 };
                             }
                             return post;
@@ -86,12 +114,31 @@ const PostContainer = ({
                     })),
                 };
             });
-            return { previousData }
+
+
+            queryClient.setQueryData(["getPostForDetails", id], (oldData: any) => {
+                if (!oldData) return oldData;
+                return {
+                    ...oldData,
+                    isBookMarked: !oldData.isBookMarked,
+                };
+            });
+
+            return { previousFeedData, previousDetailData };
         },
         onError: (err, variables, context) => {
-            if (context?.previousData) {
-                queryClient.setQueriesData({ queryKey: ["posts-fetching"] }, context.previousData);
+            if (context?.previousFeedData) {
+                context.previousFeedData.forEach(([queryKey, data]) => {
+                    queryClient.setQueryData(queryKey, data);
+                });
             }
+            if (context?.previousDetailData) {
+                queryClient.setQueryData(["getPostForDetails", id], context.previousDetailData);
+            }
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ["posts-fetching"] });
+            queryClient.invalidateQueries({ queryKey: ["getPostForDetails", id] });
         }
     });
     const onCardClicked = () => {
