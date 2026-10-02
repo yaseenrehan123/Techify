@@ -3,6 +3,7 @@ import { BookmarkPostFields, CreateCommentFields, CreatePostFields, EditCommentF
 import prisma from "@/lib/prisma";
 import { Post } from "@/lib/generated/prisma/client";
 import createCommentSchema from "@/schemas/createCommentSchema";
+import { generateEmbedding } from "@/lib/ai";
 
 export async function createPost(data: CreatePostFields) {
     const user = await prisma.user.findUnique({
@@ -18,8 +19,47 @@ export async function createPost(data: CreatePostFields) {
 
     console.log("POST CREATED: ", post);
 }
-export async function fetchPosts({ page, limit, filters, currentUserId }: FetchPostFields) {
-    const feedType: FeedType = filters?.feed ?? "latest"
+export async function fetchPosts({ page, limit, filters, currentUserId, query }: FetchPostFields) {
+    if (query && query.trim() !== "") {
+        const embedding = await generateEmbedding(query);
+        const vectorString = `[${embedding.join(",")}]`;
+        const offset = (page - 1) * limit;
+
+        // Clean raw SQL query without nested queryRaw calls
+        const posts = await prisma.$queryRaw<any[]>`
+            SELECT 
+                p.id, 
+                p.title, 
+                p.text, 
+                p."createdAt", 
+                p."updatedAt", 
+                p."userClerkId",
+                u.username,
+                (SELECT COUNT(*)::int FROM "Like" l WHERE l."postId" = p.id) as "likesCount",
+                (SELECT COUNT(*)::int FROM "Comment" c WHERE c."postId" = p.id) as "commentsCount",
+                ${currentUserId
+                ? prisma.$queryRaw`EXISTS(SELECT 1 FROM "Like" l WHERE l."postId" = p.id AND l."userClerkId" = ${currentUserId})`
+                : prisma.$queryRaw`false`} as "isLiked",
+                ${currentUserId
+                ? prisma.$queryRaw`EXISTS(SELECT 1 FROM "Bookmark" b WHERE b."postId" = p.id AND b."userClerkId" = ${currentUserId})`
+                : prisma.$queryRaw`false`} as "isBookMarked",
+                1 - (p.vector <=> ${vectorString}::vector) as similarity
+            FROM "Post" p
+            JOIN "User" u ON p."userClerkId" = u."clerkId"
+            WHERE p.vector IS NOT NULL
+            ORDER BY p.vector <=> ${vectorString}::vector ASC
+            LIMIT ${limit + 1} OFFSET ${offset};
+        `;
+
+        const hasMore = posts.length > limit;
+        if (hasMore) posts.pop();
+
+        const nextPage = hasMore ? page + 1 : null;
+        return { posts, nextPage };
+    }
+
+    const feedType: FeedType = filters?.feed ?? "latest";
+
     if (feedType === "viewed") {
         if (!currentUserId) {
             return { posts: [], nextPage: null };
@@ -29,7 +69,7 @@ export async function fetchPosts({ page, limit, filters, currentUserId }: FetchP
             const viewedEntries = await prisma.viewedPost.findMany({
                 skip: (page - 1) * limit,
                 take: limit + 1,
-                orderBy: { createdAt: 'desc' }, // Sorts by latest view timestamp
+                orderBy: { createdAt: 'desc' },
                 where: { userClerkId: currentUserId },
                 include: {
                     post: {
@@ -50,9 +90,7 @@ export async function fetchPosts({ page, limit, filters, currentUserId }: FetchP
             });
 
             const hasMore = viewedEntries.length > limit;
-            if (hasMore) {
-                viewedEntries.pop();
-            }
+            if (hasMore) viewedEntries.pop();
 
             const formattedPosts = viewedEntries.map((entry) => {
                 const post = entry.post;
@@ -76,24 +114,25 @@ export async function fetchPosts({ page, limit, filters, currentUserId }: FetchP
     }
 
     let orderByClause: any = { createdAt: 'desc' };
-    let whereClause: any = {}
-    if (feedType == "popular") {
-        orderByClause = { likes: { _count: "desc" } }
-    }
-    else if (feedType == "explore") {
+    let whereClause: any = {};
+
+    if (feedType === "popular") {
+        orderByClause = { likes: { _count: "desc" } };
+    } else if (feedType === "explore") {
         orderByClause = { comments: { _count: 'desc' } };
     }
 
-    if (filters?.clerkId) { whereClause.userClerkId = filters?.clerkId }
-    if (filters?.postId) { whereClause.id = filters?.postId };
-    if (filters?.feed == "bookmarked") {
+    if (filters?.clerkId) { whereClause.userClerkId = filters?.clerkId; }
+    if (filters?.postId) { whereClause.id = filters?.postId; }
+    if (filters?.feed === "bookmarked") {
         if (!currentUserId) {
-            return { posts: [], nextPage: null }
+            return { posts: [], nextPage: null };
         }
         whereClause.bookmarks = {
             some: { userClerkId: currentUserId }
-        }
+        };
     }
+
     try {
         const posts = await prisma.post.findMany({
             skip: (page - 1) * limit,
@@ -103,19 +142,19 @@ export async function fetchPosts({ page, limit, filters, currentUserId }: FetchP
             include: {
                 _count: {
                     select: { likes: true, comments: true }
-
                 },
                 likes: currentUserId ? {
-                    where:
-                        { userClerkId: currentUserId }, select: { userClerkId: true }
+                    where: { userClerkId: currentUserId },
+                    select: { userClerkId: true }
                 } : false,
                 user: { select: { username: true } },
                 bookmarks: currentUserId ? {
-                    where: { userClerkId: currentUserId }, select: { userClerkId: true }
+                    where: { userClerkId: currentUserId },
+                    select: { userClerkId: true }
                 } : false,
-
             }
         });
+
         const hasMore = posts.length > limit;
 
         const formattedPosts = posts.map((post) => ({
@@ -130,17 +169,15 @@ export async function fetchPosts({ page, limit, filters, currentUserId }: FetchP
         }));
 
         if (hasMore) {
-            posts.pop();
+            formattedPosts.pop(); // Fixed: pop from formattedPosts instead of raw posts
         }
 
         const nextPage = hasMore ? page + 1 : null;
 
-        return { posts: formattedPosts, nextPage }
+        return { posts: formattedPosts, nextPage };
+    } catch (err) {
+        throw new Error((err as Error).message);
     }
-    catch (err) {
-        throw new Error((err as Error).message)
-    }
-
 }
 
 export async function likePost({ clerkId, postId }: LikePostFields) {

@@ -120,7 +120,8 @@ export type FetchPostFields = {
         postId?: string,
         feed: FeedType
     },
-    currentUserId: string
+    currentUserId: string,
+    query?: string
 }
 export type GetPostByIdFields = {
     currentUserId?: string,

@@ -1,8 +1,8 @@
 import React from 'react'
-import { MenubarContent, MenubarGroup, MenubarItem, MenubarMenu, Menubar as ShadMenubar } from './ui/menubar'
-import { Input } from './ui/input'
+import { Menubar as ShadMenubar } from './ui/menubar'
 import { FaRegBell } from "react-icons/fa";
 import ProfileAvatar from './auth/ProfileAvatar';
+import Searchbar from './search/Searchbar';
 const Menubar = () => {
     return (
         <div className='fixed top-0 left-0 w-full z-10 text-brand-white'>
@@ -11,10 +11,7 @@ const Menubar = () => {
                 <div className='flex gap-2  px-4'>
                     <div className='text-4xl font-bold text-brand-accent'>Techify</div>
                 </div>
-                <div className='w-full flex items-center justify-center '>
-                    <Input className='w-full rounded-[40px] border border-brand-border text-center outline-1'
-                        placeholder='Search Something' />
-                </div>
+                <Searchbar />
                 <div className='flex justify-end items-center px-4 text-brand-white gap-7 text-[1.4rem]'>
                     <div className='hover:cursor-pointer '>
                         <FaRegBell />
