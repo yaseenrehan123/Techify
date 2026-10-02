@@ -15,13 +15,15 @@ const Sidebar = () => {
     const router = useRouter();
     const handleFeedChange = (feed: FeedType) => {
         const params = new URLSearchParams(searchParams.toString());
-        params.set("feed", feed);
         params.delete("authorId");
+        params.delete("query");
+        params.set("feed", feed);
         router.push(`/?${params.toString()}`);
     };
     const handlePostsBySelf = () => {
         const params = new URLSearchParams(searchParams.toString());
         params.delete("feed");
+        params.delete("query");
         params.set("authorId", user?.id ?? "");
         router.push(`/?${params.toString()}`);
     }

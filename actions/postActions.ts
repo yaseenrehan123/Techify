@@ -1,5 +1,5 @@
 "use server";
-import { BookmarkPostFields, CreateCommentFields, CreatePostFields, EditCommentFields, FeedType, FetchCommentsFromPostFields, FetchPostFields, GetPostByIdFields, LikePostFields, PostUserActionFields, PostWithRelations } from "@/lib/types";
+import { BookmarkPostFields, CreateCommentFields, CreatePostFields, DeleteCommentFields, EditCommentFields, FeedType, FetchCommentsFromPostFields, FetchPostFields, GetPostByIdFields, LikePostFields, PostUserActionFields, PostWithRelations } from "@/lib/types";
 import prisma from "@/lib/prisma";
 import { Post } from "@/lib/generated/prisma/client";
 import createCommentSchema from "@/schemas/createCommentSchema";
@@ -398,4 +398,14 @@ export async function addToViewedPosts({ clerkId, postId }: PostUserActionFields
     } catch (err) {
         throw new Error((err as Error).message);
     }
+}
+
+export async function deleteComment({ clerkId, commentId }: DeleteCommentFields) {
+    if (!clerkId || !commentId) {
+        throw new Error(`ClerkId Or CommentId is null! ${clerkId} ${commentId}`);
+    }
+    await prisma.comment.delete({
+        where: { userClerkId: clerkId, id: commentId }
+    });
+
 }

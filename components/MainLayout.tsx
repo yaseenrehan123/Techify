@@ -7,7 +7,7 @@ import DeleteAccountConfirmation from "./auth/delete-account/DeleteAccountConfir
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
     return (
-        <div className='w-full h-full bg-[#0B0B0B] relative '>
+        <div className='w-full h-full bg-brand-background relative '>
             <Suspense>
                 <Menubar />
                 <AuthFloatingModal />

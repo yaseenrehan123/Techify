@@ -7,7 +7,7 @@ const Menubar = () => {
     return (
         <div className='fixed top-0 left-0 w-full z-10 text-brand-white'>
             <ShadMenubar className={`w-full h-auto border-b-2 border-brand-border min-h-14 grid grid-cols-[1fr_2fr_1fr] items-center
-                 py-1 flex-none gap-6`}>
+                 py-1 flex-none gap-6 bg-brand-dark-overlay`}>
                 <div className='flex gap-2  px-4'>
                     <div className='text-4xl font-bold text-brand-accent'>Techify</div>
                 </div>

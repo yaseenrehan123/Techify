@@ -4,19 +4,20 @@ import { Button } from '@/components/ui/button'
 import Alignment from '@/components/ui/custom/alignment';
 import Message from '@/components/ui/custom/message';
 import { Input } from '@/components/ui/input'
-import { usePostDetailsnContext } from '@/contexts/PostDetailsContext';
-import { CreateCommentFields, CreateCommentFormFields } from '@/lib/types';
+import { usePostDetailsContext } from '@/contexts/PostDetailsContext';
+import { formatTimeAgo } from '@/lib/formatTime';
+import { CreateCommentFields, CreateCommentFormFields, FetchCommentsFromPostReturn } from '@/lib/types';
 import createCommentFormSchema from '@/schemas/createCommentFormSchema';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
 
 const AddCommentForm = () => {
     const { user } = useUser();
     const [enabled, setEnabled] = useState<boolean>(false)
-    const { id } = usePostDetailsnContext();
+    const { id } = usePostDetailsContext();
     const queryClient = useQueryClient();
     const { register, handleSubmit, formState: { errors }, reset } = useForm<CreateCommentFormFields>({
         resolver: zodResolver(createCommentFormSchema)
@@ -24,11 +25,61 @@ const AddCommentForm = () => {
     const { mutateAsync, isPending, isError, isSuccess, error } = useMutation({
         mutationKey: ["createComment", id],
         mutationFn: createComment,
-        onSuccess: () => {
-            reset();
+        onMutate: async (newCommentVariables: CreateCommentFields) => {
+            const queryKey = ["fetchComments", id];
+
+            // 1. Cancel outgoing fetches so they don't overwrite optimistic update
+            await queryClient.cancelQueries({ queryKey });
+
+            // 2. Snapshot previous cache value for rollback
+            const previousComments = queryClient.getQueryData<InfiniteData<FetchCommentsFromPostReturn>>(queryKey);
+
+            // 3. Create a temporary optimistic comment item
+            const optimisticComment = {
+                id: `temp-${Date.now()}`,
+                postId: id,
+                username: user?.username || user?.firstName || "You",
+                text: newCommentVariables.text,
+                userClerkId: user?.id ?? "",
+                isByUser: true,
+                user: undefined,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            };
+
+            // 4. Prepend the new comment to the first page of the infinite query cache
+            queryClient.setQueryData<InfiniteData<FetchCommentsFromPostReturn>>(queryKey, (oldData) => {
+                if (!oldData || !oldData.pages || oldData.pages.length === 0) return oldData;
+
+                const firstPage = oldData.pages[0];
+                const updatedFirstPage = {
+                    ...firstPage,
+                    comments: [optimisticComment, ...firstPage.comments],
+                };
+
+                return {
+                    ...oldData,
+                    pages: [updatedFirstPage, ...oldData.pages.slice(1)],
+                };
+            });
+
+            return { previousComments };
+        },
+        onError: (_err, _variables, context) => {
+            // Roll back to previous cache state if server request fails
+            if (context?.previousComments) {
+                queryClient.setQueryData(["fetchComments", id], context.previousComments);
+            }
+        },
+        onSettled: () => {
+            // Refetch in background to sync temporary ID with actual DB ID
             queryClient.invalidateQueries({
                 queryKey: ["fetchComments", id]
-            })
+            });
+        },
+        onSuccess: () => {
+            reset();
+            setEnabled(false)
         },
 
 

@@ -8,10 +8,11 @@ import deleteAccountConfirmationSchema from "@/schemas/deleteAccountConfirmation
 import createCommentSchema from "@/schemas/createCommentSchema";
 import createPostSchema from "@/schemas/createPostSchema";
 import editCommentSchema from "@/schemas/editCommentSchema";
-import { fetchCommentsFromPost, fetchPosts, getPostById } from "@/actions/postActions";
+import { editComment, fetchCommentsFromPost, fetchPosts, getPostById } from "@/actions/postActions";
 import { InfiniteData } from "@tanstack/react-query";
 import createPostFormSchema from "@/schemas/createPostFormSchema";
 import createCommentFormSchema from "@/schemas/createCommentFormSchema";
+import editCommentFormSchema from "@/schemas/editCommentFormSchema";
 
 //COMPONENTS
 export type PostContainerProps = {
@@ -37,9 +38,19 @@ export type PostInteractiveButtonProps = {
 }
 export type CommentContainerProps = {
     id: string,
+    postId: string,
     username: string,
     text: string,
-    createdAt: Date
+    createdAt: Date,
+    isByUser: boolean
+}
+export type CommentMenuButtonFloatingProps = React.HTMLAttributes<HTMLDivElement> & {
+    ref: React.Ref<HTMLDivElement>
+    isByUser: boolean,
+    isMenuOpen: boolean
+}
+export type CommentMenuButtonIconProps = React.HTMLAttributes<HTMLDivElement> & {
+    ref: React.Ref<HTMLDivElement>
 }
 //SHADCN COMPONENTS
 export type AlignmentProps = React.HTMLAttributes<HTMLDivElement> & {
@@ -74,6 +85,14 @@ export type PostUserActionFields = {
     clerkId: string,
     postId: string
 }
+export type CommentData = {
+    id: string,
+    postId: string,
+    username: string,
+    createdAt: string,
+    text: string,
+    isByUser: boolean
+};
 //CONTEXTS 
 export type ProfileFloatingContextFields = ComponentActiveState;
 export type DeleteAccountConfirmationContextFields = ComponentActiveState
@@ -85,10 +104,28 @@ export type AuthFloatingModalContextFields = {
 export type PostDetailsContextFields = {
     id: string,
 }
+export type CommentContainerContextFields = {
+    id: string,
+    postId: string
+    username: string,
+    createdAt: string,
+    isByUser: boolean,
+    text: string,
+    isEditing: boolean,
+    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+}
+export type CommentActiveMenuContextFields = {
+    activeCommentId: string,
+    setActiveCommentId: React.Dispatch<React.SetStateAction<string>>
+}
 //CONTEXT PROVIDERS
 export type PostDetailsContextProviderProps = {
     children: React.ReactNode,
     postData: PostDetailsContextFields
+}
+export type CommentContainerContextProviderProps = {
+    children: React.ReactNode,
+    commentData: CommentData
 }
 //SCHEMA INFERS
 export type CreateUserFields = z.infer<typeof createUserSchema>
@@ -101,6 +138,7 @@ export type CreatePostFields = z.infer<typeof createPostSchema>
 export type EditCommentFields = z.infer<typeof editCommentSchema>
 export type CreatePostFormFields = z.infer<typeof createPostFormSchema>
 export type CreateCommentFormFields = z.infer<typeof createCommentFormSchema>
+export type EditCommentFormFields = z.infer<typeof editCommentFormSchema>
 //ACTION PROPS
 export type FetchCommentsFromPostFields = {
     page: number,
@@ -131,7 +169,13 @@ export type BookmarkPostFields = {
     clerkId: string,
     postId: string
 }
+export type DeleteCommentFields = {
+    clerkId: string,
+    commentId: string,
+}
 //RETURN FUNCTION TYPE
 export type PostWithRelations = Awaited<ReturnType<typeof getPostById>>
 export type FetchPostsReturn = Awaited<ReturnType<typeof fetchPosts>>
-//export type FetchCommentsFromPostReturn = Awaited<ReturnType<typeof fetchCommentsFromPost>>
+export type FetchCommentsFromPostReturn = Awaited<ReturnType<typeof fetchCommentsFromPost>>
+//EQUALIZATION
+//export type EditCommentFormFields = CreateCommentFormFields

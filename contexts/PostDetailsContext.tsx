@@ -18,7 +18,7 @@ const PostDetailsContextProvider = ({ children, postData }: PostDetailsContextPr
 
 export default PostDetailsContextProvider
 
-export function usePostDetailsnContext(): PostDetailsContextFields {
+export function usePostDetailsContext(): PostDetailsContextFields {
     const context = useContext(PostDetailsContext);
     if (!context) throw new Error("Profile Floating Panel Context Null!");
     return context

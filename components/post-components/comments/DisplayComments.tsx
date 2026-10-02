@@ -8,11 +8,12 @@ import React, { useEffect } from 'react'
 import Message from '@/components/ui/custom/message';
 import { useUser } from '@clerk/nextjs';
 //import CommentActiveMenuContextProvider from '@/context/CommentActiveMenuContext';
-import { usePostDetailsnContext } from '@/contexts/PostDetailsContext';
+import { usePostDetailsContext } from '@/contexts/PostDetailsContext';
+import CommentActiveMenuContextProvider from '@/contexts/CommentActiveMenuContext';
 
 const DisplayComments = () => {
     const LIMIT: number = 12
-    const { id: postId } = usePostDetailsnContext();
+    const { id: postId } = usePostDetailsContext();
     const { user } = useUser()
 
     const { ref, inView } = useInView({
@@ -53,21 +54,24 @@ const DisplayComments = () => {
 
     return (
         <div className='flex items-center flex-col w-full gap-3'>
-            {data.pages.map((page, pageIndex) => (
-                <React.Fragment key={pageIndex}>
-                    {page.comments.map((comment, i) => (
-                        <CommentContainer
-                            key={comment.id}
-                            id={comment.id}
-                            username={comment.username}
-                            text={comment.text}
-                            createdAt={comment.createdAt}
-                        //isByUser={comment.isByUser}
-                        //postId={comment.postId}
-                        />
-                    ))}
-                </React.Fragment>
-            ))}
+            <CommentActiveMenuContextProvider>
+                {data.pages.map((page, pageIndex) => (
+                    <React.Fragment key={pageIndex}>
+                        {page.comments.map((comment, i) => (
+                            <CommentContainer
+                                key={comment.id}
+                                id={comment.id}
+                                postId={comment.postId}
+                                username={comment.username}
+                                text={comment.text}
+                                isByUser={comment.isByUser}
+                                createdAt={comment.createdAt}
+                            />
+                        ))}
+                    </React.Fragment>
+                ))}
+            </CommentActiveMenuContextProvider>
+
 
 
             <div ref={ref}></div>

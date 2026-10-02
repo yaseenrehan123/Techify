@@ -9,7 +9,8 @@
   --brand-text: #696969;
   --brand-accent: #2FA982;
   --brand-dark: #252525;
-  --brand-dark-hover: #171717
+  --brand-dark-hover: #171717;
+  --brand-dark-overlay: #0B0B0B
 }
 
 @theme inline {
@@ -23,7 +24,8 @@
   --color-brand-text: var(--brand-text);
   --color-brand-accent: var(--brand-accent);
   --color-brand-dark: var(--brand-dark);
-  --color-brand-dark-hover: #171717;
+  --color-brand-dark-hover: var(--brand-dark-hover);
+  --color-brand-dark-overlay: var(--brand-dark-overlay)
 }
 
 @media (prefers-color-scheme: dark) {
