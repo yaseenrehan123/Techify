@@ -11,8 +11,16 @@ const ProfileAvatar = () => {
     const { user } = useUser()
     const { signOut } = useClerk()
     const loggedIn: boolean = !!user && !!user?.id;
-    const username: string = user?.username || user?.firstName || user?.fullName || user?.emailAddresses[0]?.emailAddress || ""
-    const displayChar: string = username.charAt(0).toUpperCase();
+    const primaryEmail = user?.primaryEmailAddress?.emailAddress ?? "";
+
+    const displayName =
+        user?.username ||
+        user?.fullName ||
+        user?.firstName ||
+        (primaryEmail && !primaryEmail.includes("placeholder") ? primaryEmail.split("@")[0] : "") ||
+        "User";
+
+    const displayChar = displayName.charAt(0).toUpperCase();
     const { enabled, setEnabled } = useProfileFloatingContext();
     const { setMode } = useAuthFloatingModalContext();
     const { setEnabled: setDeleteConfirmation } = useDeleteAccountConfirmationContext();

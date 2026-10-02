@@ -95,10 +95,29 @@ export async function POST(req: NextRequest) {
             }, { status: 400 })
         }
         if (type === "user.created") {
-            const email = data.email_addresses?.[0]?.email_address ?? "";
-            const username = data.username ?? generateFromEmail(email,
-                { randomDigits: 4 }
-            );
+            /* const email = data.email_addresses?.[0]?.email_address ?? "";
+             const username = data.username ?? generateFromEmail(email,
+                 { randomDigits: 4 }
+             );*/
+            // 1. Primary Email check, fallback to external_accounts (GitHub profile)
+            const primaryEmail = data.email_addresses?.[0]?.email_address;
+            const githubAccount = data.external_accounts?.[0];
+
+            let email = primaryEmail;
+            if (!email || email.includes("placeholder.com")) {
+                email = githubAccount?.email_address ?? "";
+            }
+
+            // 2. Obtain realistic username (GitHub handle -> Clerk username -> Name fallback -> Generated)
+            const rawUsername =
+                data.username ||
+                githubAccount?.username ||
+                (data.first_name ? `${data.first_name}${data.last_name ?? ""}` : null);
+
+            const username =
+                rawUsername ||
+                (email ? generateFromEmail(email, { randomDigits: 4 }) : `user_${data.id.slice(-6)}`);
+
             const newUser = await prisma.user.create({
                 data: {
                     clerkId: data.id!,
